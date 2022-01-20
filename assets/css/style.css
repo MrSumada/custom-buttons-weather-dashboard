@@ -1,6 +1,7 @@
 body {
     box-sizing: border-box;
     height: 100%;
+    background: linear-gradient(-90deg, #3d3b8e, #6883ba);;
 }
 
 main {
@@ -45,26 +46,15 @@ h1 {
     align-items: center;
 }
 
-/* .container {
-    display:table;
-    width: 100%;
-    margin-top: -50px;
-    padding: 50px 0 0 0; /*set left/right padding according to needs
-} */
+#input-box {
+    border: 2px solid #3d3b8e;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
 
-/* .row {
-    height: 100%;
-    display: table-row;
-} */
-
-/* .row .no-float {
-    display: table-cell;
-    float: none;
-} */
-
-.card {
-    margin: 20px;
-    height: 200px;
+#cityBtns {
+    border-top: 2px solid #6883ba;
+    overflow: auto;
 }
 
 #content-box {
@@ -73,13 +63,30 @@ h1 {
 
 .dashboard {
     border: 2px solid #3d3b8e;
+    border-radius: 3px;
     min-height: 500px;
     display: block;
+    background-color: #f9f9f9;
+}
+
+.card {
+    border: 2px solid #3d3b8e;
+    height: 200px;
+    min-width: 120px;
+}
+
+@media screen and (max-width:992px) {
+    .dashboard {
+        min-height: 400px;
+    }
 }
 
 @media screen and (max-width: 600px) {
     h1 {
         font-size: 50px;
     }
-    
+
+    #input-box {
+        margin-bottom: 30px;
+    }
 }

@@ -15,21 +15,27 @@
         <h1 class="d-flex justify-content-center">Weather Dashboard</h1>
     </header>
     <main  class="container">
-        <div class="row d-flex">
-            <div class="col-12 col-md-4 col-lg-2 no-float m-2 w-100" id="input-box">
-                <h2 class="card-header row">Search for a City</h2>
-                <input class="w-100" form="text" id="city-input" placeholder="City Name">
-                <button class="w-100" id="search">Search</button>
+        <div class="row d-flex justify-content-center">
+            <div class="col-12 col-md-4 col-lg-2 no-float mt-2 px-2 w-100" id="input-box">
+                <div class="row d-flex flex-column px-4">
+                    <h2 class="card-header row">Search for a City</h2>
+                    <input class="w-100" form="text" id="city-input" placeholder="City Name">
+                    <button class="w-100 mb-1" id="searchBtn">Search</button>   
+                </div>
+                <div class="row d-flex flex-column px-2 m-2" id="cityBtns">
+                    <button class="cityBtn mw-100" id="get-city">South Lake Tahoe, CA</button>
+                    <button class="cityBtn mw-100" id="get-city">Lima, Peru</button>
+                </div>
             </div>
-            <div class="col-12 col-md-7 col-lg-9 w-100 no-float m-2" id="content-box">
+            <div class="col-12 col-md-8 col-lg-10 mt-2 w-100 no-float" id="content-box">
                 <div class="dashboard"></div>
-                <!-- <div class="5-da row">
-                    <div class="card col-2" id="day-1"></div>
-                    <div class="card col-2" id="day-2"></div>
-                    <div class="card col-2" id="day-3"></div>
-                    <div class="card col-2" id="day-4"></div>
-                    <div class="card col-2" id="day-5"></div>
-                </div> -->
+                <div class="5-da row m-0 d-flex justify-content-around">
+                    <div class="card col-2 mt-3 mr-2" id="day-1"></div>
+                    <div class="card col-2 mt-3 mx-2" id="day-2"></div>
+                    <div class="card col-2 mt-3 mx-2" id="day-3"></div>
+                    <div class="card col-2 mt-3 mx-2" id="day-4"></div>
+                    <div class="card col-2 mt-3 ml-2" id="day-5"></div>
+                </div>
             </div>
         </div>
     </main>
