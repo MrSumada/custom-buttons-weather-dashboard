@@ -28,13 +28,29 @@
                 </div>
             </div>
             <div class="col-12 col-md-8 col-lg-10 mt-2 w-100 no-float" id="content-box">
-                <div class="dashboard"></div>
-                <div class="5-da row m-0 d-flex justify-content-around">
-                    <div class="card col-2 mt-3 mr-2" id="day-1"></div>
-                    <div class="card col-2 mt-3 mx-2" id="day-2"></div>
-                    <div class="card col-2 mt-3 mx-2" id="day-3"></div>
-                    <div class="card col-2 mt-3 mx-2" id="day-4"></div>
-                    <div class="card col-2 mt-3 ml-2" id="day-5"></div>
+                <div class="dashboard p-4">
+                    <h2 id="city-heading">
+                        <span in="city-name">South Lake Tahoe, CA</span>
+                        <span id="date">(1/20/2022)</span>
+                        <span id="heading-icon">🌧</span>
+                    </h2>
+                    <div class="row d-flex flex-column mx-5"id="city-info">
+                        <p class="mt-4 mb-3"><span id="city-temp">Temp: </span></p>
+                        <p class="my-3"><span id="city-wind">Wind: </span></p>
+                        <p class="my-3"><span id="city-humid">Humidity: </span></p>
+                        <p class="my-1"><span id="city-uv">UV Index: </span><button type="submit" disabled="Disabled" class="disabled px-1" id="uvBtn">UV Good</button></p>
+                        
+                    </div>
+                </div>
+                <div class="5-day row mt-3 mx-5 d-flex">
+                    <h3 id="day5-heading">5-Day Forecast</h3>
+                </div>
+                <div class="5-day row m-0 d-flex justify-content-around">
+                    <div class="card col-2 mt-3 mr-2 flex-fill" id="day-1"></div>
+                    <div class="card col-2 mt-3 mx-2 flex-fill" id="day-2"></div>
+                    <div class="card col-2 mt-3 mx-2 flex-fill" id="day-3"></div>
+                    <div class="card col-2 mt-3 mx-2 flex-fill" id="day-4"></div>
+                    <div class="card col-2 mt-3 ml-2 flex-fill" id="day-5"></div>
                 </div>
             </div>
         </div>

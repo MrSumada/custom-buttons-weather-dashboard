@@ -10,17 +10,20 @@ main {
 
 button {
     margin: 10px 0 10px 0;
-    color: #f9f9f9;
-    background-color: #6883ba;
     border: none;
     border-radius: 3px;
+}
+
+button:enabled {
+    background-color: #6883ba;
+    color: #f9f9f9;
 }
 
 input {
     margin: 20px 0 5px 0;
 }
 
-button:hover {
+button:hover:enabled {
     background-color: #3d3b8e;
 }
 
@@ -46,6 +49,14 @@ h1 {
     align-items: center;
 }
 
+h2, h3 {
+    text-align: center;
+}
+
+p {
+    font-size: 22px;
+}
+
 #input-box {
     border: 2px solid #3d3b8e;
     border-radius: 5px;
@@ -64,9 +75,18 @@ h1 {
 .dashboard {
     border: 2px solid #3d3b8e;
     border-radius: 3px;
-    min-height: 500px;
+    min-height: 400px;
     display: block;
     background-color: #f9f9f9;
+}
+
+#uvBtn {
+    padding: 0;
+}
+
+#day5-heading {
+    color: #f9f9f9;
+    font-weight: 300;
 }
 
 .card {
@@ -89,4 +109,9 @@ h1 {
     #input-box {
         margin-bottom: 30px;
     }
+
+    /* .dashboard {
+        padding-left: 0;
+        padding-right: 0;
+    } */
 }
