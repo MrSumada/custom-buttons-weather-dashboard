@@ -28,8 +28,10 @@ $("#searchBtn").on("click", function(){
     })
     .then(response => response.json())
     .then(result => {
+
+        $("#city-name").text(result.locations[0].formattedAddress).append();
         console.log(result);
-        console.log(result.locations[0].referencePosition);
+        // console.log(result.locations[0].referencePosition);
         return result.locations[0].referencePosition;
     })
     .then(function(data) {
@@ -42,6 +44,25 @@ $("#searchBtn").on("click", function(){
             })
             .then(function(data) {
                 console.log(data);
+
+                var timeStamp = data.current.dt + data.timezone_offset + 18000;
+                var date = new Date(timeStamp * 1000);
+                var month = date.getMonth();
+                var day = date.getDate();
+                var year = date.getFullYear();
+                var hours = date.getHours();
+                var minutes = date.getMinutes();
+                var amPm;
+                if (hours >= 12) {
+                    hours = hours - 12;
+                    amPm = "pm"
+                } else {
+                    amPm = "am"
+                }
+                var locationTime = "(" + month + "/" + day + "/" + year + "), and the Current time is " + hours + ":" + minutes + " " + amPm;
+
+                console.log(locationTime);
+                $("#date").text(locationTime).append();
         });
     })
 
