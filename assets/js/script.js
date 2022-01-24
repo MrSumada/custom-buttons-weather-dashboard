@@ -72,8 +72,11 @@ $("#searchBtn").on("click", function(){
             var weatherIcon;
             if (weather === "Clouds") {weatherIcon = " ☁️"}
             if (weather === "Thunderstorm") {weatherIcon = " ⚡️"}
-            if (weather === "Rain") {weatherIcon = " 💧"}
+            if (weather === "Rain" || weather === "Drizzle") {weatherIcon = " 💧"}
             if (weather === "Snow") {weatherIcon = " ❄️"}
+            if (weather === "Tornado") {weatherIcon = " 🌪"}
+            if (weather === "Mist" || weather === "Smoke" || weather === "Haze" ||weather === "Dust" || weather === "Fog" || weather === "Sand" || weather === "Squall" || weather === "Ash") 
+                {weatherIcon = " 🌫"}
             if (weather === "Clear") {
                 if (timeStamp - sunrise < 0 || timeStamp - sunset > 0) { weatherIcon = " 🌑"
                 } else {weatherIcon = " ☀️"}
@@ -83,8 +86,8 @@ $("#searchBtn").on("click", function(){
 
             // Append Temperature
             // Convert Kelvin to Fahrenheit
-            var temp = (Math.round(((data.current.temp - 273.15) * 1.8 + 32) * 10)) / 10;
-            $("#city-temp").text("Temperature: " + temp + " F").append();
+            var temp = (Math.round(((data.current.temp - 273.15) * 1.8 + 32) * 100)) / 100;
+            $("#city-temp").text("Temperature: " + temp + "°F").append();
 
             // Append Wind Speed
             // Convert meter/sec to Miles/hour
@@ -110,10 +113,16 @@ $("#searchBtn").on("click", function(){
             } else if (uvIndex > 10.5) {
                 $("#uvBtn").addClass("uv-extreme");
             }
-            $("#uvBtn").text(uvIndex);
+            $("#uvBtn").text("UV Index: " + uvIndex);
             
             for (var i = 0; i < 5; i++) {
-
+                var dailyTimeStamp = data.daily[i].dt + data.timezone_offset + 18000;
+                var dailyDate = new Date(dailyTimeStamp * 1000);
+                var dailyMonth = dailyDate.getMonth() + 1;
+                var dailyDay = dailyDate.getDate();
+                var dailyYear = dailyDate.getFullYear();
+                var finalDailyDate = "(" + dailyMonth + "/" + dailyDay + "/" + dailyYear + ")";
+                $()
             }
         })
     })

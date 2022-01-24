@@ -54,7 +54,7 @@ h2, h3 {
 }
 
 p {
-    font-size: 22px;
+    font-size: 18px;
 }
 
 #input-box {
@@ -78,6 +78,10 @@ p {
     min-height: 400px;
     display: block;
     background-color: #f9f9f9;
+}
+
+.dashboard p {
+    font-size: 22px;
 }
 
 #date {
@@ -114,7 +118,20 @@ p {
 .card {
     border: 2px solid #3d3b8e;
     height: 200px;
-    min-width: 120px;
+    min-width: 150px;
+    font-size: 14px;
+    line-height: 10px;
+    padding-top: 12px;
+}
+
+.day5 p {
+    padding: 2px 5px;
+}
+
+.day5-icon {
+    margin: 15px 0 30px 0;
+    font-size: 50px;
+    text-align: center;
 }
 
 @media screen and (max-width:992px) {
