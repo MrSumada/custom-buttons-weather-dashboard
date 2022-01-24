@@ -20,8 +20,6 @@
 $("#searchBtn").on("click", function(){
     var city = $("#city-input").val().replace(/\ /g, "%20");
 
-    console.log(city);
-
     var data = fetch("https://api.myptv.com/geocoding/v1/locations/by-text?searchText=" + city, {
         method: "GET",
         headers: { apiKey: "Y2E4ODI1NGU1MjlhNGFmODllN2VhYTQ0NzM4ZWUzZDM6MjAwYmZlN2UtZWYzNi00ZDIyLTkzNjEtNjFiMGU2MmE4NGY3", "Content-Type": "application/json" },
@@ -29,41 +27,77 @@ $("#searchBtn").on("click", function(){
     .then(response => response.json())
     .then(result => {
 
+        // Append City Name
+        console.log(result.locations[0].formattedAddress)
+
         $("#city-name").text(result.locations[0].formattedAddress).append();
-        console.log(result);
-        // console.log(result.locations[0].referencePosition);
         return result.locations[0].referencePosition;
     })
     .then(function(data) {
-        // var roundLat = Math.round(data.latitude * 100) / 100;
-        // var roundLong = Math.round(data.longitude * 100) / 100;
         fetch(
             'https://api.openweathermap.org/data/2.5/onecall?lat=' + data.latitude + '&lon=' + data.longitude + '&exclude=minutely&appid=d3c47a1f177d224c8f7fe16686ddb65e'
-            ).then(function(response) {
-                return response.json();
-            })
-            .then(function(data) {
-                console.log(data);
+        ).then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            console.log(data);
 
-                var timeStamp = data.current.dt + data.timezone_offset + 18000;
-                var date = new Date(timeStamp * 1000);
-                var month = date.getMonth();
-                var day = date.getDate();
-                var year = date.getFullYear();
-                var hours = date.getHours();
-                var minutes = date.getMinutes();
-                var amPm;
-                if (hours >= 12) {
-                    hours = hours - 12;
-                    amPm = "pm"
-                } else {
-                    amPm = "am"
+            // Append Current City Time
+
+            var timeStamp = data.current.dt + data.timezone_offset + 18000;
+            var date = new Date(timeStamp * 1000);
+            var month = date.getMonth() + 1;
+            var day = date.getDate();
+            var year = date.getFullYear();
+            var hours = date.getHours();
+            var minutes = date.getMinutes();
+                if (minutes < 10) {
+                    minutes = "0" + minutes;
                 }
-                var locationTime = "(" + month + "/" + day + "/" + year + "), and the Current time is " + hours + ":" + minutes + " " + amPm;
+            var amPm;
+            if (hours >= 12) {
+                hours = hours - 12;
+                amPm = "pm"
+            } else {
+                amPm = "am"
+            }
+            var locationTime = "Where the date is " + month + "/" + day + "/" + year + " and the time is " + hours + ":" + minutes + " " + amPm;
 
-                console.log(locationTime);
-                $("#date").text(locationTime).append();
-        });
+            $("#date").text(locationTime).append();
+
+            // Append Temperature
+            // Convert Kelvin to Fahrenheit
+            var temp = (Math.round(((data.current.temp - 273.15) * 1.8 + 32) * 10)) / 10;
+            $("#city-temp").text("Temperature: " + temp + " F").append();
+
+            // Append Wind Speed
+            // Convert meter/sec to Miles/hour
+            var wind = (Math.round((data.current.wind_speed * 2.236494) * 10)) / 10;
+            $("#city-wind").text("Wind: " + wind + " MPH").append();
+
+            // Append Humidity
+            var humidity = (Math.round(data.current.humidity));
+            $("#city-humid").text("Humidity: " + humidity + "%").append();
+
+            // Append UV Index
+            var uvIndex = data.current.uvi;
+
+            $("#uvBtn").removeClass("uv-low uv-moderate uv-high uv-very-high uv-extreme");
+            if (uvIndex <= 2.5) {
+                $("#uvBtn").addClass("uv-low");
+            } else if (uvIndex <= 5.5) {
+                $("#uvBtn").addClass("uv-moderate");
+            } else if (uvIndex <= 7.5) {
+                $("#uvBtn").addClass("uv-high");
+            } else if (uvIndex <= 10.5) {
+                $("#uvBtn").addClass("uv-very-high");
+            } else if (uvIndex > 10.5) {
+                $("#uvBtn").addClass("uv-extreme");
+            }
+            $("#uvBtn").text(uvIndex);
+            
+        })
+
     })
 
     // console.log(data);

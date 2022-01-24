@@ -80,9 +80,31 @@ p {
     background-color: #f9f9f9;
 }
 
+#date {
+    text-align: center;
+}
+
 #uvBtn {
+    color: white;
     padding: 0;
 }
+
+.uv-low {
+    background-color: #3ea72d;
+}
+.uv-moderate {
+    background-color: #fff300;
+}
+.uv-high {
+    background-color: #f18b00;
+}
+.uv-very-high {
+    background-color: #e53210;
+}
+.uv-extreme {
+    background-color: #b567a4;
+}
+
 
 #day5-heading {
     color: #f9f9f9;
