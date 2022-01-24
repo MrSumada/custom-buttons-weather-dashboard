@@ -1,4 +1,4 @@
-// var city;
+var heading;
 
 // fetch(
 //     'https://api.openweathermap.org/data/2.5/onecall?lat=33.44&lon=-94.04&exclude=minutely&appid=d3c47a1f177d224c8f7fe16686ddb65e'
@@ -18,8 +18,11 @@
 
 
 $("#searchBtn").on("click", function(){
+
+    // swap spaces with %20 for api call
     var city = $("#city-input").val().replace(/\ /g, "%20");
 
+    // API call for lat and long of city
     var data = fetch("https://api.myptv.com/geocoding/v1/locations/by-text?searchText=" + city, {
         method: "GET",
         headers: { apiKey: "Y2E4ODI1NGU1MjlhNGFmODllN2VhYTQ0NzM4ZWUzZDM6MjAwYmZlN2UtZWYzNi00ZDIyLTkzNjEtNjFiMGU2MmE4NGY3", "Content-Type": "application/json" },
@@ -27,12 +30,13 @@ $("#searchBtn").on("click", function(){
     .then(response => response.json())
     .then(result => {
 
-        // Append City Name
-        console.log(result.locations[0].formattedAddress)
-
-        $("#city-name").text(result.locations[0].formattedAddress).append();
+        // Append City Name from API formatted Name
+        heading = result.locations[0].formattedAddress;
+        $("#city-name").text(heading).append();
         return result.locations[0].referencePosition;
     })
+
+    // API call for weather data
     .then(function(data) {
         fetch(
             'https://api.openweathermap.org/data/2.5/onecall?lat=' + data.latitude + '&lon=' + data.longitude + '&exclude=minutely&appid=d3c47a1f177d224c8f7fe16686ddb65e'
@@ -43,7 +47,6 @@ $("#searchBtn").on("click", function(){
             console.log(data);
 
             // Append Current City Time
-
             var timeStamp = data.current.dt + data.timezone_offset + 18000;
             var date = new Date(timeStamp * 1000);
             var month = date.getMonth() + 1;
@@ -51,9 +54,7 @@ $("#searchBtn").on("click", function(){
             var year = date.getFullYear();
             var hours = date.getHours();
             var minutes = date.getMinutes();
-                if (minutes < 10) {
-                    minutes = "0" + minutes;
-                }
+                if (minutes < 10) { minutes = "0" + minutes; }
             var amPm;
             if (hours >= 12) {
                 hours = hours - 12;
@@ -62,8 +63,23 @@ $("#searchBtn").on("click", function(){
                 amPm = "am"
             }
             var locationTime = "Where the date is " + month + "/" + day + "/" + year + " and the time is " + hours + ":" + minutes + " " + amPm;
-
             $("#date").text(locationTime).append();
+
+            // Append Weather Icon
+            var sunrise = data.current.sunrise;
+            var sunset = data.current.sunset;
+            var weather = data.current.weather[0].main;
+            var weatherIcon;
+            if (weather === "Clouds") {weatherIcon = " ☁️"}
+            if (weather === "Thunderstorm") {weatherIcon = " ⚡️"}
+            if (weather === "Rain") {weatherIcon = " 💧"}
+            if (weather === "Snow") {weatherIcon = " ❄️"}
+            if (weather === "Clear") {
+                if (timeStamp - sunrise < 0 || timeStamp - sunset > 0) { weatherIcon = " 🌑"
+                } else {weatherIcon = " ☀️"}
+            }
+            console.log(heading);
+            $("#city-name").text(heading + weatherIcon).append();
 
             // Append Temperature
             // Convert Kelvin to Fahrenheit
@@ -96,8 +112,10 @@ $("#searchBtn").on("click", function(){
             }
             $("#uvBtn").text(uvIndex);
             
-        })
+            for (var i = 0; i < 5; i++) {
 
+            }
+        })
     })
 
     // console.log(data);
