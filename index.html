@@ -39,13 +39,13 @@
                     
                     <!-- Current City Weather Info -->
                     <div class="row d-flex flex-column mx-5"id="city-info">
-                        <p class="mt-4 mb-3"> <!-- Temperature added HERE -->
+                        <p class="mt-2 mb-1"> <!-- Temperature added HERE -->
                             <span id="city-temp"></span></p>
-                        <p class="my-3"> <!-- Wind Speed added HERE -->
+                        <p class="my-1"> <!-- Wind Speed added HERE -->
                             <span id="city-wind"></span></p>
-                        <p class="my-3"> <!-- Humidity added HERE -->
+                        <p class="my-1"> <!-- Humidity added HERE -->
                             <span id="city-humid"></span></p>
-                        <p class="my-1"> <!-- UV Index added HERE -->
+                        <p class=""> <!-- UV Index added HERE -->
                             <button type="submit" disabled="Disabled" class="disabled px-1" id="uvBtn"></button></p>
                         
                     </div>
@@ -56,18 +56,47 @@
                     <h3 id="day5-heading">5-Day Forecast</h3>
                 </div>
                 <div class="day5 row m-0 d-flex justify-content-around">
-                    <div class="card d-flex w-25 mt-3 mr-2 align-content-between flex-fill p-3" id="day-1">
-                        <h5 class="text-center">(12/12/2022)</h5>
-                        <p class="day5-icon">☁️</p>
-                        <p>Temp: 72.02°F</p>
-                        <p>Wind: 9.53 MPH</p>
-                        <p>Humidity: 81%</p>
+                    <div class="card w-25 mt-3 mr-2 flex-fill p-3" id="day-1">
+                        <h5 class="text-center card-weekday">Wednesday</h5>
+                        <h5 class="text-center card-date">(12/12/2022)</h5>
+                        <p class="card-icon">☁️</p>
+                        <p class="card-temp">Temp: 72.02°F</p>
+                        <p class="card-wind">Wind: 9.53 MPH</p>
+                        <p class="card-humid">Humidity: 81%</p>
                     </div>
-                    <div class="card w-25 mt-3 mr-2 flex-fill" id="day-2"></div>
-                    <div class="card w-25 mt-3 mr-2 flex-fill" id="day-3"></div>
-                    <div class="card w-25 mt-3 mr-2 flex-fill" id="day-4"></div>
-                    <div class="card w-25 mt-3 mr-2 flex-fill" id="day-5"></div>
-                    <div class="w-25 mt-3 mr-2 flex-fill" id="day-5"></div>
+                    <div class="card w-25 mt-3 mr-2 flex-fill p-3" id="day-2">
+                        <h5 class="text-center card-weekday"></h5>
+                        <h5 class="text-center card-date"></h5>
+                        <p class="card-icon"></p>
+                        <p class="card-temp"></p>
+                        <p class="card-wind"></p>
+                        <p class="card-humid"></p>
+                    </div>
+                    <div class="card w-25 mt-3 mr-2 flex-fill p-3" id="day-3">
+                        <h5 class="text-center card-weekday"></h5>
+                        <h5 class="text-center card-date"></h5>
+                        <p class="card-icon"></p>
+                        <p class="card-temp"></p>
+                        <p class="card-wind"></p>
+                        <p class="card-humid"></p>
+                    </div>
+                    <div class="card w-25 mt-3 mr-2 flex-fill p-3" id="day-4">
+                        <h5 class="text-center card-weekday"></h5>
+                        <h5 class="text-center card-date"></h5>
+                        <p class="card-icon"></p>
+                        <p class="card-temp"></p>
+                        <p class="card-wind"></p>
+                        <p class="card-humid"></p>
+                    </div>
+                    <div class="card w-25 mt-3 mr-2 flex-fill p-3" id="day-5">
+                        <h5 class="text-center card-weekday"></h5>
+                        <h5 class="text-center card-date"></h5>
+                        <p class="card-icon"></p>
+                        <p class="card-temp"></p>
+                        <p class="card-wind"></p>
+                        <p class="card-humid"></p>
+                    </div>
+                    <div class="w-25 mt-3 mr-2 flex-fill p-3 placeholder" id="day-5"></div>
                 </div>
             </div>
         </div>

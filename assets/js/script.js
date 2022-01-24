@@ -49,6 +49,9 @@ $("#searchBtn").on("click", function(){
             // Append Current City Time
             var timeStamp = data.current.dt + data.timezone_offset + 18000;
             var date = new Date(timeStamp * 1000);
+            var weekday = date.getDay();
+            var options = {weekday: "long"}
+            var weekdayNamed = new Intl.DateTimeFormat('en-US', options).format(weekday);
             var month = date.getMonth() + 1;
             var day = date.getDate();
             var year = date.getFullYear();
@@ -62,7 +65,7 @@ $("#searchBtn").on("click", function(){
             } else {
                 amPm = "am"
             }
-            var locationTime = "Where the date is " + month + "/" + day + "/" + year + " and the time is " + hours + ":" + minutes + " " + amPm;
+            var locationTime = "Where it is " + weekdayNamed + ", " + month + "/" + day + "/" + year + ", and the time is " + hours + ":" + minutes + " " + amPm;
             $("#date").text(locationTime).append();
 
             // Append Weather Icon
@@ -81,7 +84,6 @@ $("#searchBtn").on("click", function(){
                 if (timeStamp - sunrise < 0 || timeStamp - sunset > 0) { weatherIcon = " 🌑"
                 } else {weatherIcon = " ☀️"}
             }
-            console.log(heading);
             $("#city-name").text(heading + weatherIcon).append();
 
             // Append Temperature
@@ -118,11 +120,47 @@ $("#searchBtn").on("click", function(){
             for (var i = 0; i < 5; i++) {
                 var dailyTimeStamp = data.daily[i].dt + data.timezone_offset + 18000;
                 var dailyDate = new Date(dailyTimeStamp * 1000);
+                
+                var options = {weekday: "long"}
+                var dailyWeekdayNamed = new Intl.DateTimeFormat('en-US', options).format(weekday);
+                            
                 var dailyMonth = dailyDate.getMonth() + 1;
                 var dailyDay = dailyDate.getDate();
                 var dailyYear = dailyDate.getFullYear();
-                var finalDailyDate = "(" + dailyMonth + "/" + dailyDay + "/" + dailyYear + ")";
-                $()
+                var finalDailyDate = dailyMonth + "/" + dailyDay + "/" + dailyYear;
+
+                console.log(weekday)
+
+                var cardId = "#day-" + [i+1];
+                $(cardId).find(".card-weekday").text(dailyWeekdayNamed).append();
+                $(cardId).find(".card-date").text(finalDailyDate).append();
+
+                weekday++;
+                options = {weekday: "long"};
+
+                var dailyWeather = data.daily[i].weather[0].main;
+                var dailyIcon;
+                if (dailyWeather === "Clouds") {dailyIcon = " ☁️"}
+                if (dailyWeather === "Thunderstorm") {dailyIcon = " ⚡️"}
+                if (dailyWeather === "Rain" || dailyWeather === "Drizzle") {dailyIcon = " 💧"}
+                if (dailyWeather === "Snow") {dailyIcon = " ❄️"}
+                if (dailyWeather === "Tornado") {dailyIcon = " 🌪"}
+                if (dailyWeather === "Mist" || dailyWeather === "Smoke" || dailyWeather === "Haze" ||dailyWeather === "Dust" || dailyWeather === "Fog" || dailyWeather === "Sand" || dailyWeather === "Squall" || dailyWeather === "Ash") 
+                    {dailyIcon = " 🌫"}
+                if (dailyWeather === "Clear") {
+                    {dailyIcon = " ☀️"}
+                }
+
+                $(cardId).find(".card-icon").text(dailyIcon).append();
+
+                var dailyTemp = (Math.round(((data.daily[i].temp.day - 273.15) * 1.8 + 32) * 100)) / 100;
+                $(cardId).find(".card-temp").text("Temp: " + dailyTemp + "°F");
+
+                var dailyWind = (Math.round((data.daily[i].wind_speed * 2.236494) * 10)) / 10;
+                $(cardId).find(".card-wind").text("Wind: " + dailyWind + " MPH");
+
+                var dailyHumid = (Math.round(data.current.humidity));
+                $(cardId).find(".card-humid").text("Humidity: " + dailyHumid + "%").append();
             }
         })
     })
