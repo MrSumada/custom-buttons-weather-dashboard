@@ -89,23 +89,27 @@ p {
 }
 
 #uvBtn {
-    color: white;
     padding: 0;
 }
 
 .uv-low {
+    color: white;
     background-color: #3ea72d;
 }
 .uv-moderate {
+    color: rgb(85, 92, 56);
     background-color: #fff300;
 }
 .uv-high {
+    color: white;
     background-color: #f18b00;
 }
 .uv-very-high {
+    color: white;
     background-color: #e53210;
 }
 .uv-extreme {
+    color: white;
     background-color: #b567a4;
 }
 
@@ -120,7 +124,7 @@ p {
     min-height: 200px;
     min-width: 150px;
     font-size: 14px;
-    line-height: 10px;
+    line-height: 23px;
     padding-top: 12px;
 }
 
