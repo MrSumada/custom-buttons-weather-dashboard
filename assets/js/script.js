@@ -1,12 +1,10 @@
 var button;
-var heading;
-var formatName;
 var saveArray = false;
 var skipConfirm = false;
 
 // Add Recent Buttons from localStorage, OR set savedBtns as blank Array.
 var savedBtns = JSON.parse(localStorage.getItem("Recent Searches")) || [];
-// console.log(savedBtns);
+console.log(savedBtns);
 
     // Append Recent Search Buttons
 function startUpBtns() {
@@ -18,7 +16,7 @@ function startUpBtns() {
         buttonEl.textContent = savedBtns[i].name;
         var btnInput = JSON.stringify(savedBtns[i].input);
         buttonEl.setAttribute("data-input", btnInput);
-        // console.log(btnInput);
+        console.log(btnInput);
         btnContainer.appendChild(buttonEl);
     }
     btnClicks();
@@ -28,35 +26,34 @@ function startUpBtns() {
 startUpBtns();
 
 function search(event) {
-    var cityInput;
     // If Recent Search Buttons selected, use their "Input" data, from savedBtns Input property
     if ($(this).text() !== "Search") {
-        heading = $(this).text();
-        cityInput = $(this).data("input");
+        var city = $(this).data("input");
 
     // If search button selected, use input field for City name
     } else {
         // swap spaces with %20 for api call
-        heading = $("#city-input").val().toLowerCase();
-        cityInput = $("#city-input").val().toLowerCase().replace(/\ /g, "%20");
+        var city = $("#city-input").val().toLowerCase().replace(/\ /g, "%20");
         $("#city-input").val("");
         saveArray = true;
     }
 
     // API call for lat and long of city
-    fetch("https://api.myptv.com/geocoding/v1/locations/by-text?searchText=" + cityInput, {
+    fetch("https://api.myptv.com/geocoding/v1/locations/by-text?searchText=" + city, {
         method: "GET",
         headers: { apiKey: "Y2E4ODI1NGU1MjlhNGFmODllN2VhYTQ0NzM4ZWUzZDM6MjAwYmZlN2UtZWYzNi00ZDIyLTkzNjEtNjFiMGU2MmE4NGY3", "Content-Type": "application/json" },
     })
     .then(response => response.json())
     .then(result => {
 
-        formatName = result.locations[0].formattedAddress;
+        // Append City Name from API formatted Name
+        heading = result.locations[0].formattedAddress;
+        $("#city-name").text(heading).append();
 
         // Check if recent Button already exists
         for (var i = 0; i < savedBtns.length; i++) {
-            var btnCheck = savedBtns[i].nameCheck;
-            if (btnCheck === formatName) {
+            var btnCheck = savedBtns[i].name;
+            if (btnCheck === heading) {
                 saveArray = false;
             }
         }
@@ -65,8 +62,7 @@ function search(event) {
         if (savedBtns.length < 12 && saveArray === true){
             var savedBtn = {
                 name: heading,
-                nameCheck: formatName,
-                input: cityInput
+                input: city
             };
             if (!skipConfirm) {
                 savedBtns.push(savedBtn);
@@ -81,8 +77,7 @@ function search(event) {
                 $(".cityBtn").remove();
                 var savedBtn = {
                     name: heading,
-                    nameCheck: formatName,
-                    input: cityInput
+                    input: city
                 };
                 savedBtns.push(savedBtn);
                 localStorage.setItem("Recent Searches", JSON.stringify(savedBtns));
@@ -90,6 +85,8 @@ function search(event) {
             } else {
                 skipConfirm = true;
             }
+            
+            
         }
         return result.locations[0].referencePosition;
     })
@@ -107,7 +104,6 @@ function search(event) {
             var timeStamp = data.current.dt + data.timezone_offset + 18000;
             var date = new Date(timeStamp * 1000);
             var weekday = date.getDay();
-            var weekdayNamed;
             if (weekday === 0) { weekdayNamed = "Sunday";}
             if (weekday === 1) { weekdayNamed = "Monday";}
             if (weekday === 2) { weekdayNamed = "Tuesday";}
@@ -120,9 +116,7 @@ function search(event) {
             var year = date.getFullYear();
             var hours = date.getHours();
             var amPm;
-            if (hours === 12) {
-                amPm = "pm"
-            } else if (hours > 12) {
+            if (hours > 12) {
                 hours = hours - 12;
                 amPm = "pm"
             } else {
@@ -136,8 +130,8 @@ function search(event) {
             $("#date").text(locationTime).append();
 
             // Append Weather Icon
-            var sunrise = data.current.sunrise;
-            var sunset = data.current.sunset;
+            var sunrise = data.current.sunrise + 18000;
+            var sunset = data.current.sunset + 18000;
             var weather = data.current.weather[0].main;
             var weatherIcon;
             if (weather === "Clouds") {weatherIcon = " ☁️"}
@@ -148,10 +142,9 @@ function search(event) {
             if (weather === "Mist" || weather === "Smoke" || weather === "Haze" ||weather === "Dust" || weather === "Fog" || weather === "Sand" || weather === "Squall" || weather === "Ash") 
                 {weatherIcon = " 🌫"}
             if (weather === "Clear") {
-                if (timeStamp < sunrise || timeStamp > sunset) { weatherIcon = " 🌑"
+                if (timeStamp - sunrise < 0 || timeStamp - sunset > 0) { weatherIcon = " 🌑"
                 } else {weatherIcon = " ☀️"}
             }
-            // console.log("Sunrise: " + sunrise + ", Current Time: " + timeStamp + ", Sunset: " + sunset +);
             $("#city-name").text(heading + weatherIcon).append();
 
             // Append Temperature
@@ -192,6 +185,9 @@ function search(event) {
                 var dailyTimeStamp = data.daily[i].dt + data.timezone_offset + 18000;
                 var dailyDate = new Date(dailyTimeStamp * 1000);
                 var dailyWeekday = date.getDay() + i;
+                // var options = {weekday: "long"}
+                // var dailyWeekdayNamed = new Intl.DateTimeFormat('en-US', options).format(weekday);
+                            
                 var dailyMonth = dailyDate.getMonth() + 1;
                 var dailyDay = dailyDate.getDate();
                 var dailyYear = dailyDate.getFullYear();
@@ -238,11 +234,12 @@ function search(event) {
                 var btnContainer = document.querySelector("#cityBtns");
                 var buttonEl = document.createElement("button");
                 buttonEl.className = "cityBtn mw-100 newSearchBtn";
-                buttonEl.textContent= formatName;
-                buttonEl.setAttribute("data-input", cityInput);
+                buttonEl.textContent= heading;
+                buttonEl.setAttribute("data-input", city);
                 btnContainer.appendChild(buttonEl);
                 $(".newSearchBtn").on("click", search);
                 saveArray = false;
+                console.log("saved")
             }
         })
     })
@@ -259,18 +256,18 @@ function btnClicks() {
 $(button).on("click", search);
 
 
-    fetch(
-        'https://api.openweathermap.org/data/2.5/onecall?lat=33.44&lon=-94.04&exclude=minutely&appid=d3c47a1f177d224c8f7fe16686ddb65e'
-        ).then(function(response) {
-            return response.json();
-        })
-        .then(function(data) {
-            console.log(data);
-    });
+    // fetch(
+    //     'https://api.openweathermap.org/data/2.5/onecall?lat=33.44&lon=-94.04&exclude=minutely&appid=d3c47a1f177d224c8f7fe16686ddb65e'
+    //     ).then(function(response) {
+    //         return response.json();
+    //     })
+    //     .then(function(data) {
+    //         console.log(data);
+    // });
     
-    fetch("https://api.myptv.com/geocoding/v1/locations/by-text?searchText=Los%20Angeles", {
-            method: "GET",
-            headers: { apiKey: "Y2E4ODI1NGU1MjlhNGFmODllN2VhYTQ0NzM4ZWUzZDM6MjAwYmZlN2UtZWYzNi00ZDIyLTkzNjEtNjFiMGU2MmE4NGY3", "Content-Type": "application/json" },
-        })
-        .then(response => response.json())
-        .then(result => console.log(result));
+    // fetch("https://api.myptv.com/geocoding/v1/locations/by-text?searchText=Los%20Angeles", {
+    //         method: "GET",
+    //         headers: { apiKey: "Y2E4ODI1NGU1MjlhNGFmODllN2VhYTQ0NzM4ZWUzZDM6MjAwYmZlN2UtZWYzNi00ZDIyLTkzNjEtNjFiMGU2MmE4NGY3", "Content-Type": "application/json" },
+    //     })
+    //     .then(response => response.json())
+    //     .then(result => console.log(result.locations[0].referencePosition));
