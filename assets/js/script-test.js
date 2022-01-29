@@ -3,10 +3,10 @@ var heading;
 var formatName;
 var saveArray = false;
 var skipConfirm = false;
+var reset = false;
 
 // Add Recent Buttons from localStorage, OR set savedBtns as blank Array.
 var savedBtns = JSON.parse(localStorage.getItem("Recent Searches")) || [];
-// console.log(savedBtns);
 
     // Append Recent Search Buttons
 function startUpBtns() {
@@ -18,7 +18,6 @@ function startUpBtns() {
         buttonEl.textContent = savedBtns[i].name;
         var btnInput = JSON.stringify(savedBtns[i].input);
         buttonEl.setAttribute("data-input", btnInput);
-        // console.log(btnInput);
         btnContainer.appendChild(buttonEl);
     }
     btnClicks();
@@ -38,9 +37,11 @@ function search(event) {
     } else {
         // swap spaces with %20 for api call
         heading = $("#city-input").val().toLowerCase();
+        console.log(heading);
         cityInput = $("#city-input").val().toLowerCase().replace(/\ /g, "%20");
         $("#city-input").val("");
         saveArray = true;
+        console.log(saveArray);
     }
 
     // API call for lat and long of city
@@ -51,6 +52,7 @@ function search(event) {
     .then(response => response.json())
     .then(result => {
 
+        // Append City Name from API formatted Name
         formatName = result.locations[0].formattedAddress;
 
         // Check if recent Button already exists
@@ -58,7 +60,7 @@ function search(event) {
             var btnCheck = savedBtns[i].nameCheck;
             if (btnCheck === formatName) {
                 saveArray = false;
-            }
+            } 
         }
         
         // If not, Save Button to localStorage
@@ -74,8 +76,9 @@ function search(event) {
             }
         } else if (savedBtns.length = 12 && saveArray === true && skipConfirm !== true) {
             saveArray = false;
-            var reset = window.confirm("Sorry! You can't add any more Recent Search Buttons. Would you like to reset your recent searches?");
+            reset = window.confirm("Sorry! You can't add any more Recent Search Buttons. Would you like to reset your recent searches?");
             if (reset === true) {
+                console.log("reset")
                 savedBtns = [];
                 localStorage.setItem("Recent Searches", JSON.stringify(savedBtns));
                 $(".cityBtn").remove();
@@ -151,7 +154,6 @@ function search(event) {
                 if (timeStamp < sunrise || timeStamp > sunset) { weatherIcon = " 🌑"
                 } else {weatherIcon = " ☀️"}
             }
-            // console.log("Sunrise: " + sunrise + ", Current Time: " + timeStamp + ", Sunset: " + sunset +);
             $("#city-name").text(heading + weatherIcon).append();
 
             // Append Temperature
@@ -188,7 +190,6 @@ function search(event) {
             // 5 Day Forecast Loop
             for (var i = 0; i < 5; i++) {
                 var cardId = "#day-" + [i+1];
-
                 var dailyTimeStamp = data.daily[i].dt + data.timezone_offset + 18000;
                 var dailyDate = new Date(dailyTimeStamp * 1000);
                 var dailyWeekday = date.getDay() + i;
@@ -238,15 +239,15 @@ function search(event) {
                 var btnContainer = document.querySelector("#cityBtns");
                 var buttonEl = document.createElement("button");
                 buttonEl.className = "cityBtn mw-100 newSearchBtn";
-                buttonEl.textContent= formatName;
+                buttonEl.textContent= heading;
                 buttonEl.setAttribute("data-input", cityInput);
                 btnContainer.appendChild(buttonEl);
                 $(".newSearchBtn").on("click", search);
                 saveArray = false;
+                console.log(savedBtns);
             }
         })
     })
-// });
 }
 
 // Add button querySelectors
@@ -257,20 +258,3 @@ function btnClicks() {
 // Click Search Button and initiate Geolocation fetch
 
 $(button).on("click", search);
-
-
-    fetch(
-        'https://api.openweathermap.org/data/2.5/onecall?lat=33.44&lon=-94.04&exclude=minutely&appid=d3c47a1f177d224c8f7fe16686ddb65e'
-        ).then(function(response) {
-            return response.json();
-        })
-        .then(function(data) {
-            console.log(data);
-    });
-    
-    fetch("https://api.myptv.com/geocoding/v1/locations/by-text?searchText=Los%20Angeles", {
-            method: "GET",
-            headers: { apiKey: "Y2E4ODI1NGU1MjlhNGFmODllN2VhYTQ0NzM4ZWUzZDM6MjAwYmZlN2UtZWYzNi00ZDIyLTkzNjEtNjFiMGU2MmE4NGY3", "Content-Type": "application/json" },
-        })
-        .then(response => response.json())
-        .then(result => console.log(result));

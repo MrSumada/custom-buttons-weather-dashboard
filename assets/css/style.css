@@ -12,6 +12,7 @@ button {
     margin: 10px 0 10px 0;
     border: none;
     border-radius: 3px;
+    text-transform: capitalize;
 }
 
 button:enabled {
@@ -50,6 +51,7 @@ h1 {
 }
 
 h2, h3 {
+    text-transform: capitalize;
     text-align: center;
 }
 
