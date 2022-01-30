@@ -1,12 +1,14 @@
+// Global vars
 var button;
+var heading;
+var formatName;
 var saveArray = false;
-var skipConfirm = false;
 
 // Add Recent Buttons from localStorage, OR set savedBtns as blank Array.
 var savedBtns = JSON.parse(localStorage.getItem("Recent Searches")) || [];
-console.log(savedBtns);
+// console.log(savedBtns);
 
-    // Append Recent Search Buttons
+// Append Recent Search Buttons
 function startUpBtns() {
     var btnContainer = document.querySelector("#cityBtns");
     
@@ -16,77 +18,50 @@ function startUpBtns() {
         buttonEl.textContent = savedBtns[i].name;
         var btnInput = JSON.stringify(savedBtns[i].input);
         buttonEl.setAttribute("data-input", btnInput);
-        console.log(btnInput);
         btnContainer.appendChild(buttonEl);
     }
     btnClicks();
 }
 
-// Add saved Buttons Function
-startUpBtns();
-
+// reset Button function when 10 searches reached
+function reset(event) {
+    savedBtns = [];
+    localStorage.setItem("Recent Searches", JSON.stringify(savedBtns));
+    $(".cityBtn").remove();
+}
+    
 function search(event) {
+    var cityInput;
     // If Recent Search Buttons selected, use their "Input" data, from savedBtns Input property
     if ($(this).text() !== "Search") {
-        var city = $(this).data("input");
+        heading = $(this).text();
+        cityInput = $(this).data("input");
 
-    // If search button selected, use input field for City name
+    // If Search button selected, use input field for City name
     } else {
         // swap spaces with %20 for api call
-        var city = $("#city-input").val().toLowerCase().replace(/\ /g, "%20");
-        $("#city-input").val("");
         saveArray = true;
+        heading = $("#city-input").val().toLowerCase();
+        cityInput = $("#city-input").val().toLowerCase().replace(/\ /g, "%20");
+        $("#city-input").val("");
     }
 
     // API call for lat and long of city
-    fetch("https://api.myptv.com/geocoding/v1/locations/by-text?searchText=" + city, {
+    fetch("https://api.myptv.com/geocoding/v1/locations/by-text?searchText=" + cityInput, {
         method: "GET",
         headers: { apiKey: "Y2E4ODI1NGU1MjlhNGFmODllN2VhYTQ0NzM4ZWUzZDM6MjAwYmZlN2UtZWYzNi00ZDIyLTkzNjEtNjFiMGU2MmE4NGY3", "Content-Type": "application/json" },
     })
     .then(response => response.json())
     .then(result => {
 
-        // Append City Name from API formatted Name
-        heading = result.locations[0].formattedAddress;
-        $("#city-name").text(heading).append();
+        formatName = result.locations[0].formattedAddress;
 
-        // Check if recent Button already exists
+        // Check if recent Button already exists, Don't Save/Append if so
         for (var i = 0; i < savedBtns.length; i++) {
-            var btnCheck = savedBtns[i].name;
-            if (btnCheck === heading) {
+            var btnCheck = savedBtns[i].nameCheck;
+            if (btnCheck === formatName) {
                 saveArray = false;
             }
-        }
-        
-        // If not, Save Button to localStorage
-        if (savedBtns.length < 12 && saveArray === true){
-            var savedBtn = {
-                name: heading,
-                input: city
-            };
-            if (!skipConfirm) {
-                savedBtns.push(savedBtn);
-                localStorage.setItem("Recent Searches", JSON.stringify(savedBtns));
-            }
-        } else if (savedBtns.length = 12 && saveArray === true && skipConfirm !== true) {
-            saveArray = false;
-            var reset = window.confirm("Sorry! You can't add any more Recent Search Buttons. Would you like to reset your recent searches?");
-            if (reset === true) {
-                savedBtns = [];
-                localStorage.setItem("Recent Searches", JSON.stringify(savedBtns));
-                $(".cityBtn").remove();
-                var savedBtn = {
-                    name: heading,
-                    input: city
-                };
-                savedBtns.push(savedBtn);
-                localStorage.setItem("Recent Searches", JSON.stringify(savedBtns));
-                saveArray = true;
-            } else {
-                skipConfirm = true;
-            }
-            
-            
         }
         return result.locations[0].referencePosition;
     })
@@ -104,6 +79,7 @@ function search(event) {
             var timeStamp = data.current.dt + data.timezone_offset + 18000;
             var date = new Date(timeStamp * 1000);
             var weekday = date.getDay();
+            var weekdayNamed;
             if (weekday === 0) { weekdayNamed = "Sunday";}
             if (weekday === 1) { weekdayNamed = "Monday";}
             if (weekday === 2) { weekdayNamed = "Tuesday";}
@@ -116,7 +92,9 @@ function search(event) {
             var year = date.getFullYear();
             var hours = date.getHours();
             var amPm;
-            if (hours > 12) {
+            if (hours === 12) {
+                amPm = "pm"
+            } else if (hours > 12) {
                 hours = hours - 12;
                 amPm = "pm"
             } else {
@@ -130,8 +108,8 @@ function search(event) {
             $("#date").text(locationTime).append();
 
             // Append Weather Icon
-            var sunrise = data.current.sunrise + 18000;
-            var sunset = data.current.sunset + 18000;
+            var sunrise = data.current.sunrise;
+            var sunset = data.current.sunset;
             var weather = data.current.weather[0].main;
             var weatherIcon;
             if (weather === "Clouds") {weatherIcon = " ☁️"}
@@ -142,9 +120,10 @@ function search(event) {
             if (weather === "Mist" || weather === "Smoke" || weather === "Haze" ||weather === "Dust" || weather === "Fog" || weather === "Sand" || weather === "Squall" || weather === "Ash") 
                 {weatherIcon = " 🌫"}
             if (weather === "Clear") {
-                if (timeStamp - sunrise < 0 || timeStamp - sunset > 0) { weatherIcon = " 🌑"
+                if (timeStamp < sunrise || timeStamp > sunset) { weatherIcon = " 🌑"
                 } else {weatherIcon = " ☀️"}
             }
+            // console.log("Sunrise: " + sunrise + ", Current Time: " + timeStamp + ", Sunset: " + sunset +);
             $("#city-name").text(heading + weatherIcon).append();
 
             // Append Temperature
@@ -161,7 +140,7 @@ function search(event) {
             var humidity = (Math.round(data.current.humidity));
             $("#city-humid").text("Humidity: " + humidity + "%").append();
 
-            // Append UV Index
+            // Append UV Index with Specific Class for background color
             var uvIndex = data.current.uvi;
 
             $("#uvBtn").removeClass("uv-low uv-moderate uv-high uv-very-high uv-extreme");
@@ -185,9 +164,6 @@ function search(event) {
                 var dailyTimeStamp = data.daily[i].dt + data.timezone_offset + 18000;
                 var dailyDate = new Date(dailyTimeStamp * 1000);
                 var dailyWeekday = date.getDay() + i;
-                // var options = {weekday: "long"}
-                // var dailyWeekdayNamed = new Intl.DateTimeFormat('en-US', options).format(weekday);
-                            
                 var dailyMonth = dailyDate.getMonth() + 1;
                 var dailyDay = dailyDate.getDate();
                 var dailyYear = dailyDate.getFullYear();
@@ -227,23 +203,40 @@ function search(event) {
                 var dailyHumid = (Math.round(data.current.humidity));
                 $(cardId).find(".card-humid").text("Humidity: " + dailyHumid + "%").append();
             }
-
-        //Append new recent search "City" buttons
+        // Append new recent search "City" buttons
+        // Save to localStorage
+        //Check if there are 10 or more entries, offer reset Once
         }).then(function(data){
-            if (savedBtns.length <= 12 && saveArray === true && skipConfirm !== true) {
+            if (savedBtns.length < 10 && saveArray === true) {
                 var btnContainer = document.querySelector("#cityBtns");
                 var buttonEl = document.createElement("button");
                 buttonEl.className = "cityBtn mw-100 newSearchBtn";
                 buttonEl.textContent= heading;
-                buttonEl.setAttribute("data-input", city);
+                buttonEl.setAttribute("data-input", cityInput);
                 btnContainer.appendChild(buttonEl);
                 $(".newSearchBtn").on("click", search);
+                var savedBtn = {
+                    name: heading,
+                    nameCheck: formatName,
+                    input: cityInput
+                };
+                savedBtns.push(savedBtn);
+                localStorage.setItem("Recent Searches", JSON.stringify(savedBtns));
                 saveArray = false;
-                console.log("saved")
+            } 
+            if (savedBtns.length >= 10 && saveArray === true) {
+                $(".resetBtn").remove();
+                var btnContainer = document.querySelector("#cityBtns");
+                var buttonEl = document.createElement("button");
+                buttonEl.className = "cityBtn mw-100 resetBtn";
+                buttonEl.textContent= "Limit Reached: Reset Recent Cities?";
+                btnContainer.appendChild(buttonEl);
+                $(".resetBtn").on("click", reset);
+                saveArray = false;
+
             }
         })
     })
-// });
 }
 
 // Add button querySelectors
@@ -251,8 +244,10 @@ function btnClicks() {
     button = document.querySelectorAll(".searchBtn");
 }
 
-// Click Search Button and initiate Geolocation fetch
+// Add saved Buttons Function Call, On Page Load
+startUpBtns();
 
+// Click Search Button and initiate Geolocation fetch
 $(button).on("click", search);
 
 
@@ -270,4 +265,4 @@ $(button).on("click", search);
     //         headers: { apiKey: "Y2E4ODI1NGU1MjlhNGFmODllN2VhYTQ0NzM4ZWUzZDM6MjAwYmZlN2UtZWYzNi00ZDIyLTkzNjEtNjFiMGU2MmE4NGY3", "Content-Type": "application/json" },
     //     })
     //     .then(response => response.json())
-    //     .then(result => console.log(result.locations[0].referencePosition));
+    //     .then(result => console.log(result));
