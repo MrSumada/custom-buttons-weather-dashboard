@@ -4,7 +4,7 @@ Made with Javascript, Jquery, Bootstrap, the Openweather API, and the MyPTV Geoc
 
 https://mrsumada.github.io/custom-buttons-weather-dashboard/
 
-<img width="1048" alt="weather-dashboard-screenshot" src="assets/images/weather-dashboard-screenshot">
+<img width="1048" alt="weather-dashboard-screenshot" src="assets/images/weather-dashboard-screenshot.png">
 
 ## How to Use
 
